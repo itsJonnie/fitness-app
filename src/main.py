@@ -1,60 +1,72 @@
-import tkinter as tk
-from tkinter import ttk
+import customtkinter as ctk
 from database.db_setup import create_database
+from ui.workout_form import WorkoutForm
+from PIL import Image  # customtkinter uses PIL for images
 
 class FitnessApp:
     def __init__(self, root):
+        self.user_id = 1  # TODO: Replace with actual user authentication
         self.root = root
         self.root.title("Fitness Tracker")
-        self.root.geometry("800x600")
+        self.root.geometry("1000x800")  # Made window bigger
         
-        # Configure grid weight to enable centering
-        self.root.grid_rowconfigure(0, weight=1)
-        self.root.grid_columnconfigure(0, weight=1)
-
-        # Create main container
-        self.main_container = ttk.Frame(self.root, padding="20")
-        self.main_container.grid(row=0, column=0, sticky="nsew")
+        # Set theme
+        ctk.set_appearance_mode("dark")
+        ctk.set_default_color_theme("blue")
         
-        # Configure main container grid weights
-        self.main_container.grid_rowconfigure(0, weight=1)
-        self.main_container.grid_rowconfigure(1, weight=1)
-        self.main_container.grid_columnconfigure(0, weight=1)
-
-        # Style configuration
-        style = ttk.Style()
-        style.configure('Large.TLabel', font=('Helvetica', 24))
-        style.configure('Large.TButton', font=('Helvetica', 14), padding=10)
-
-        # Add welcome label
-        self.welcome_label = ttk.Label(
+        # Create main container with more padding
+        self.main_container = ctk.CTkFrame(self.root)
+        self.main_container.pack(fill="both", expand=True, padx=40, pady=40)
+        
+        # Load and display logo
+        try:
+            logo_image = Image.open("src/assets/images/rich_piana.png")
+            # Resize image to reasonable dimensions (adjust size as needed)
+            logo_image = logo_image.resize((300, 300))
+            self.logo = ctk.CTkImage(
+                light_image=logo_image,
+                dark_image=logo_image,
+                size=(300, 300)
+            )
+            
+            self.logo_label = ctk.CTkLabel(
+                self.main_container,
+                image=self.logo,
+                text=""  # No text, just image
+            )
+            self.logo_label.pack(pady=(20, 0))
+        except Exception as e:
+            print(f"Could not load logo: {e}")
+        
+        # Add welcome label with cleaner font
+        self.welcome_label = ctk.CTkLabel(
             self.main_container, 
-            text="Welcome to Fitness Tracker",
-            style='Large.TLabel'
+            text="FITNESS TRACKER 💪",  # Capitalized for cleaner look
+            font=ctk.CTkFont(family="Helvetica", size=48, weight="bold")
         )
-        self.welcome_label.grid(row=0, column=0, pady=(100, 20))
-
-        # Add login button
-        self.login_button = ttk.Button(
+        self.welcome_label.pack(pady=40)
+        
+        # Add bigger Log Workout button
+        self.workout_button = ctk.CTkButton(
             self.main_container,
-            text="Login",
-            command=self.show_login,
-            style='Large.TButton',
-            width=20
+            text="LOG WORKOUT",  # Capitalized for consistency
+            command=self.show_workout_form,
+            width=300,  # Made button wider
+            height=60,  # Made button taller
+            font=ctk.CTkFont(family="Helvetica", size=24),  # Bigger font
+            corner_radius=15  # Rounded corners
         )
-        self.login_button.grid(row=1, column=0, pady=(0, 100))
+        self.workout_button.pack(pady=40)
 
-    def show_login(self):
-        # To be implemented
-        pass
+    def show_workout_form(self):
+        workout_form = WorkoutForm(self.root)
+        workout_form.grab_set()
 
 if __name__ == "__main__":
     # Create database if it doesn't exist
     create_database()
     
     # Start the application
-    root = tk.Tk()
-    # Set minimum window size
-    root.minsize(600, 400)
+    root = ctk.CTk()
     app = FitnessApp(root)
     root.mainloop() 

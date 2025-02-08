@@ -20,7 +20,8 @@ def create_database():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         description TEXT,
-        category TEXT
+        category TEXT,
+        muscle_group TEXT NOT NULL
     )
     ''')
 
@@ -33,6 +34,7 @@ def create_database():
         sets INTEGER,
         reps INTEGER,
         weight FLOAT,
+        notes TEXT,
         date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users (id),
         FOREIGN KEY (exercise_id) REFERENCES exercises (id)
